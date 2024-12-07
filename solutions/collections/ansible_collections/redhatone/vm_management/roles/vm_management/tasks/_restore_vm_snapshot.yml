@@ -1,0 +1,59 @@
+---
+
+- name: Verify VM Snapshot Provided
+  ansible.builtin.assert:
+    that:
+      - vm_snapshot | default('', True) | length > 0
+    quiet: True
+    fail_msg: VM Snapshot not specified
+
+- name: Get VirtualMachine Snapshot
+  kubernetes.core.k8s_info:
+    api_version: snapshot.kubevirt.io/v1alpha1
+    kind: VirtualMachineSnapshot
+    namespace: "{{ vm_namespace }}"
+    name: "{{ vm_snapshot }}"
+  register: vm_snapshot_instance
+
+- name: Create Restore
+  block:
+    - name: Stop Virtual Machine
+      redhat.openshift_virtualization.kubevirt_vm:
+        name: "{{ vm_snapshot_instance.resources[0].metadata.ownerReferences[0].name }}"
+        namespace: "{{ vm_snapshot_instance.resources[0].metadata.namespace }}"
+        running: false
+        wait: true
+
+    - name: Create Restore
+      redhat.openshift.k8s:
+        state: present
+        definition:
+          apiVersion: snapshot.kubevirt.io/v1alpha1
+          kind: VirtualMachineRestore
+          metadata:
+            generateName: "{{ vm_snapshot_instance.resources[0].metadata.ownerReferences[0].name }}-"
+            namespace: "{{ vm_snapshot_instance.resources[0].metadata.namespace }}"
+            ownerReferences:
+              - apiVersion: kubevirt.io/v1
+                blockOwnerDeletion: false
+                kind: VirtualMachine
+                name: "{{ vm_snapshot_instance.resources[0].metadata.ownerReferences[0].name }}"
+                uid: "{{ vm_snapshot_instance.resources[0].metadata.ownerReferences[0].uid }}"
+          spec:
+            target:
+              apiGroup: kubevirt.io
+              kind: VirtualMachine
+              name: "{{ vm_snapshot_instance.resources[0].metadata.ownerReferences[0].name }}"
+            virtualMachineSnapshotName: "{{ vm_snapshot_instance.resources[0].metadata  .name }}"
+        wait: true
+        wait_timeout: 600
+        wait_condition:
+          type: Ready
+
+    - name: Start Virtual Machine
+      redhat.openshift_virtualization.kubevirt_vm:
+        name: "{{ vm_snapshot_instance.resources[0].metadata.ownerReferences[0].name }}"
+        namespace: "{{ vm_snapshot_instance.resources[0].metadata.namespace }}"
+        running: true
+        wait: true
+  when: "'resources' in vm_snapshot_instance and vm_snapshot_instance.resources | length == 1"

@@ -1,0 +1,40 @@
+---
+
+- name: Verify VM to Snapshot Provided
+  ansible.builtin.assert:
+    that:
+      - vm_to_snapshot | default('', True) | length > 0
+    quiet: True
+    fail_msg: VM to Snapshot not specified
+
+- name: Get VirtualMachine to snapshot
+  redhat.openshift_virtualization.kubevirt_vm_info:
+    namespace: "{{ vm_namespace }}"
+    name: "{{ vm_to_snapshot }}"
+  register: vm_info
+
+- name: Create Snapshot
+  redhat.openshift.k8s:
+    state: present
+    definition:
+      apiVersion: snapshot.kubevirt.io/v1alpha1
+      kind: VirtualMachineSnapshot
+      metadata:
+        generateName: "{{ vm_info.resources[0].metadata.name }}-"
+        namespace: "{{ vm_info.resources[0].metadata.namespace }}"
+        ownerReferences:
+          - apiVersion: kubevirt.io/v1
+            blockOwnerDeletion: false
+            kind: VirtualMachine
+            name: "{{ vm_info.resources[0].metadata.name }}"
+            uid: "{{ vm_info.resources[0].metadata.uid }}"
+      spec:
+        source:
+          apiGroup: kubevirt.io
+          kind: VirtualMachine
+          name: "{{ vm_info.resources[0].metadata.name }}"
+    wait: true
+    wait_condition:
+      type: Ready
+  when: "'resources' in vm_info and vm_info.resources | length == 1"
+

@@ -44,7 +44,7 @@
               apiGroup: kubevirt.io
               kind: VirtualMachine
               name: "{{ vm_snapshot_instance.resources[0].metadata.ownerReferences[0].name }}"
-            virtualMachineSnapshotName: "{{ vm_snapshot_instance.resources[0].metadata  .name }}"
+            virtualMachineSnapshotName: "{{ vm_snapshot_instance.resources[0].metadata.name }}"
         wait: true
         wait_timeout: 600
         wait_condition:

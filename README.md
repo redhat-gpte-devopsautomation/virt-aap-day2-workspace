@@ -62,4 +62,4 @@ For an entire lab listing of all Ansible Automation Platform workshop, please lo
 
 Turn automation into your strategic advantage with [Red Hat® Ansible® Automation Platform](https://redhat.com/ansible). Gain a trusted, versatile solution that can tackle any use case, run anywhere, and bring out the automator in everyone.
 
-![logo ansible automation platform][images/logo_aap.png]
+![logo ansible automation platform](images/logo_aap.png)

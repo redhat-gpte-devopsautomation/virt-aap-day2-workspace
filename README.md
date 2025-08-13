@@ -10,9 +10,9 @@ and maintain VMs effectively in a dynamic OpenShift environment.
 
 This repository is organized to provide clear guidance on automating Day 2 operations:
 
-- **Roles**: 
+- **Roles**:
   - `vm_management`: A role for managing VM lifecycle operations such as stopping, starting, and restarting VMs.
-  
+
 - **Playbooks**:
   - `manage_vm_playbook.yml`: Executes VM lifecycle operations.
   - `patch_vm_playbook.yml`: Applies security updates to RHEL-based VMs.
@@ -25,7 +25,7 @@ This repository is organized to provide clear guidance on automating Day 2 opera
 
 - **Lifecycle Management of VMs**:
   Automate starting, stopping, and restarting VMs using the `redhat.openshift_virtualization` Ansible Collection.
-  
+
 - **Security Patch Management**:
   Apply critical security updates to your RHEL-based VMs using the `dnf` module.
 
@@ -50,3 +50,16 @@ This repository is organized to provide clear guidance on automating Day 2 opera
    git clone https://github.com/yourusername/virt-aap-day2-workspace.git
    cd virt-aap-day2-workspace
 
+
+### Hands-on Workshop
+
+For Red Hatt employees and Red Hat partners you can order this workshop via [demo.redhat.com](demo.redhat.com).  The workshop catalog item is [Operations and Automation with OpenShift Virtualization
+](https://catalog.demo.redhat.com/catalog?item=babylon-catalog-prod/openshift-cnv.virt-aap-day-2.prod&utm_source=webapp&utm_medium=share-link).  The showroom (lab directions) can be found here: [https://rhpds.github.io/showroom-virt-aap-day-2/modules/index.html](https://rhpds.github.io/showroom-virt-aap-day-2/modules/index.html)
+
+For an entire lab listing of all Ansible Automation Platform workshop, please look here: [https://labs.demoredhat.com/](https://labs.demoredhat.com/).
+
+### Red Hat Ansible Automation Platform
+
+Turn automation into your strategic advantage with [Red Hat® Ansible® Automation Platform](https://redhat.com/ansible). Gain a trusted, versatile solution that can tackle any use case, run anywhere, and bring out the automator in everyone.
+
+![logo ansible automation platform](images/logo_aap.png)
